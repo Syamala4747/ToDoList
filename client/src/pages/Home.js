@@ -68,7 +68,7 @@ const Home = () => {
 
   return (
     <div className="container">
-      <h2>Tasks</h2>
+      <h2><b>To Do List</b></h2>
       <ul>
         {tasks.map(task => (
           <li key={task._id}>
