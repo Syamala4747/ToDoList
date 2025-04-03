@@ -6,6 +6,7 @@ const Home = () => {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState({ title: '', description: '', status: '' });
   const [editingTask, setEditingTask] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(""); // 🔍 Search bar state
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -20,6 +21,10 @@ const Home = () => {
 
     fetchTasks();
   }, []);
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   const addTask = async () => {
     try {
@@ -69,46 +74,58 @@ const Home = () => {
   return (
     <div className="container">
       <h2><b>To Do List</b></h2>
+
+      {/* 🔍 Search Bar */}
+      <input
+        type="text"
+        placeholder="Search tasks..."
+        value={searchQuery}
+        onChange={handleSearchChange}
+        className="search-bar"
+      />
+
       <ul>
-        {tasks.map(task => (
-          <li key={task._id}>
-            <div>
-              <h3>{task.title}</h3>
-              <p>{task.description}</p>
-              <p>Status: {task.status}</p>
-            </div>
-            <div>
-              <button onClick={() => deleteTask(task._id)}>Delete</button>
-              <button onClick={() => handleEditClick(task)}>Edit</button>
-            </div>
-            {editingTask && editingTask._id === task._id && (
-              <div className="editing">
-                <input
-                  type="text"
-                  name="title"
-                  value={editingTask.title}
-                  onChange={handleEditInputChange}
-                  placeholder="Title"
-                />
-                <input
-                  type="text"
-                  name="description"
-                  value={editingTask.description}
-                  onChange={handleEditInputChange}
-                  placeholder="Description"
-                />
-                <input
-                  type="text"
-                  name="status"
-                  value={editingTask.status}
-                  onChange={handleEditInputChange}
-                  placeholder="Status"
-                />
-                <button onClick={() => updateTask(task._id)}>Save</button>
+        {tasks
+          .filter(task => task.title.toLowerCase().includes(searchQuery.toLowerCase())) // 🔍 Filter logic
+          .map(task => (
+            <li key={task._id}>
+              <div>
+                <h3>{task.title}</h3>
+                <p>{task.description}</p>
+                <p>Status: {task.status}</p>
               </div>
-            )}
-          </li>
-        ))}
+              <div>
+                <button onClick={() => deleteTask(task._id)}>Delete</button>
+                <button onClick={() => handleEditClick(task)}>Edit</button>
+              </div>
+              {editingTask && editingTask._id === task._id && (
+                <div className="editing">
+                  <input
+                    type="text"
+                    name="title"
+                    value={editingTask.title}
+                    onChange={handleEditInputChange}
+                    placeholder="Title"
+                  />
+                  <input
+                    type="text"
+                    name="description"
+                    value={editingTask.description}
+                    onChange={handleEditInputChange}
+                    placeholder="Description"
+                  />
+                  <input
+                    type="text"
+                    name="status"
+                    value={editingTask.status}
+                    onChange={handleEditInputChange}
+                    placeholder="Status"
+                  />
+                  <button onClick={() => updateTask(task._id)}>Save</button>
+                </div>
+              )}
+            </li>
+          ))}
       </ul>
       <div className="add-task">
         <input
